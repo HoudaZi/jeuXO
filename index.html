@@ -1,0 +1,282 @@
+
+<!DOCTYPE html> 
+<html lang="fr"> 
+    <head> 
+        <meta charset="UTF-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <title>Jeu X O </title> 
+        <style> 
+            * { 
+                margin: 0; 
+                padding: 0; 
+                box-sizing: border-box; 
+                overflow-y: hidden;
+            }
+            body { 
+                font-family: 'Segoe UI', sans-serif; 
+                background: linear-gradient(135deg, #1e1e2f, #2c2c3e); 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                height: 100vh; 
+                color: white; 
+            } 
+            .game-container { 
+                text-align: center; 
+                background-color: #2e2e3e; 
+                padding: 30px; 
+                border-radius: 20px; 
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); 
+                height: 690px;
+            }
+            h1 { 
+                margin-bottom: 20px; 
+                color: #00cec9; 
+                font-size: 48px; 
+                text-shadow: 1px 1px 2px black; 
+            } 
+            .board { 
+                display: grid; 
+                border: 2px solid #555; 
+                width: 330px; 
+                height: 330px; 
+                grid-template-columns: repeat(3, 1fr); 
+                grid-template-rows: repeat(6, 1fr); 
+                gap: 10px; margin: auto; 
+            } 
+            .cell { 
+                width: 100px; 
+                height: 100px; 
+                background-color: #fff; 
+                border-radius: 12px; 
+                border: none; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                font-size: 38px; cursor: pointer; 
+                transition: background-color 0.3s, transform 0.2s; 
+                color: #2d3436; 
+            } 
+            .cell:hover { 
+                background-color: #dfe6e9; 
+                transform: scale(1.05); 
+            } 
+            button{ 
+                margin-top: 30px; 
+                padding: 12px 25px; 
+                font-size: 16px; 
+                font-weight: bold; 
+                cursor: pointer; 
+                background-color: #00b894; 
+                color: white; border: none; 
+                border-radius: 8px; 
+                transition: background-color 0.3s ease, transform 0.2s ease; 
+            } 
+            button:hover{ 
+                background-color: #019875; 
+                transform: scale(1.05); 
+            }
+            #message {
+                font-size: 24px;
+                color: #ffeaa7;
+                margin-bottom: 20px;
+                text-shadow: 1px 1px 2px #000;
+                font-weight: bold;
+            }
+            input[type="text"] {
+                width: 220px;
+                padding: 12px;
+                margin: 10px;
+                border: none;
+                border-radius: 10px;
+                font-size: 16px;
+                background-color: #dfe6e9;
+                color: #2d3436;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                transition: 0.3s ease;
+                outline: none;
+            }
+
+            input[type="text"]:focus {
+                background-color: #ffffff;
+                box-shadow: 0 0 10px #00cec9;
+            }
+            #score {
+                background-color: #353547;
+                padding: 12px 20px;
+                margin: 20px auto;
+                border-radius: 12px;
+                width: fit-content;
+                color: #ffeaa7;
+                font-size: 20px;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                text-align: center;
+                text-shadow: 1px 1px 2px #000;
+            }
+
+        </style> 
+    </head> 
+    <body> 
+
+
+        <div class="game-container"> 
+            <h1>Jeu X O</h1> 
+            <input type="text" id="joueurX" placeholder="Nom du joueur X" required>
+            <input type="text" id="joueurO" placeholder="Nom du joueur O" required> 
+            <br>
+            <span id="message"></span>
+            <br>
+            <div class="board"> 
+                <div class="cell" id="cell-0" data-index="0"></div> 
+                <div class="cell" id="cell-1" data-index="1"></div> 
+                <div class="cell" id="cell-2" data-index="2"></div> 
+                <div class="cell" id="cell-3" data-index="3"></div> 
+                <div class="cell" id="cell-4" data-index="4"></div> 
+                <div class="cell" id="cell-5" data-index="5"></div>
+                <div class="cell" id="cell-6" data-index="6"></div> 
+                <div class="cell" id="cell-7" data-index="7"></div> 
+                <div class="cell" id="cell-8" data-index="8"></div> 
+                </div> 
+                <button id="button">Répéter</button>
+                <button id="btn">Rejouer</button>
+                <!-- عداد يظهر فيه كم مرة ربح كل لاعب --> 
+                <div id="score">
+                    <p><samp id="x">X: </samp><span id="scoreX">0</span> | <samp id="o">O:</samp> <span id="scoreO">0</span></p>
+                </div>
+            </div> 
+            <!-- أصوات -->
+            <audio id="sound-clickX" src="a (2).mp3"></audio>
+            <audio id="sound-win" src="crowd-cheer-in-school-auditorium-236699.mp3"></audio>
+            <audio id="sound-draw" src="frustated-scream-female-230561.mp3"></audio>
+            <audio id="sound-clickO" src="select-sound-121244.mp3"></audio>
+            <script> 
+                // نجيبو les valeur ديال les input
+                let joueurX =document.getElementById("joueurX")
+                let joueurO =document.getElementById("joueurO")
+
+                let scoreX = 0
+                let scoreO = 0
+                // نجيبو الأصوات
+                let soundClickx = document.getElementById("sound-clickX")
+                let soundWin = document.getElementById("sound-win")
+                let soundDraw = document.getElementById("sound-draw")
+                let soundClickO = document.getElementById("sound-clickO")
+                // نجيبو span
+                let message =document.getElementById('message')
+
+                // نجيبو samp
+                let x=document.getElementById('x')
+                let o=document.getElementById('o')
+
+                message.innerHTML=`Tour du ${joueurO.value} joueur`
+                let button = document.getElementById("button") 
+                let cells = document.querySelectorAll(".cell")
+                let tab = Array(9).fill(null)
+                let cont = 1
+                function verifier() { 
+                    const test = [ 
+                        [0, 1, 2], [3, 4, 5], [6, 7, 8], // lignes
+                        [0, 3, 6], [1, 4, 7], [2, 5, 8], // colonnes
+                        [0, 4, 8], [2, 4, 6] // diagonales
+                    ]
+                    for (let combo of test) { 
+                        const [a, b, c] = combo
+                        if (tab[a] && tab[a] === tab[b] && tab[a] === tab[c]) { 
+                            return tab[a] 
+                        } 
+                        } 
+                        return null
+                } 
+                function  terminerJeu(gagnant) {
+                    setTimeout(() => { 
+                        alert("Le joueur " + gagnant + " a gagné !")
+                    }, 100) 
+                } 
+
+
+                cells.forEach(cell => { 
+                    cell.addEventListener("click", () => { 
+                    const index = Number(cell.getAttribute("data-index"))
+                    if (cell.innerHTML === "" && !tab[index]) { 
+                        
+                        if (cont % 2 === 0) { 
+                            message.innerHTML=`Au joueur ${joueurO.value} de jouer` // الدور التالي
+                            cell.innerHTML = "X"
+                            cell.style.backgroundColor="red"
+                            cell.style.color="#dfe6e9"
+                            tab[index] = "X"
+                            soundClickx.play() // صوت الضغط
+                        } 
+                        else{ 
+                            message.innerHTML=`Au joueur ${joueurX.value} de jouer`// الدور التالي
+                            cell.innerHTML = "O"
+                            tab[index] = "O"
+                            cell.style.backgroundColor="green"
+                            cell.style.color="#dfe6e9"
+                            soundClickO.play() // صوت الضغط
+                        } 
+                        cont++
+
+                        const gagnant = verifier()
+                            if (gagnant) {
+                                if ((gagnant === "X" && cont % 2 === 1) || (gagnant === "O" && cont % 2 === 0)) {
+                                    soundWin.play()// اللاعب الحالي ربح
+
+                                    if (gagnant === "X") {
+                                        scoreX++
+                                        x.innerHTML=`${joueurX.value} : `
+                                        document.getElementById("scoreX").textContent = scoreX
+                                    }
+                                    if (gagnant === "O") {
+                                        scoreO++
+                                        o.innerHTML=`${joueurO.value} : `
+                                        document.getElementById("scoreO").textContent = scoreO
+                                    }
+                                }
+                                terminerJeu(gagnant)
+                            } 
+                            else if (cont > 9) { 
+                                setTimeout(() => { 
+                                    soundDraw.play()
+                                        alert("Match nul !") 
+                                }, 100) 
+                            } 
+                            } 
+                        }) 
+                    })
+                    button.addEventListener("click", () => { 
+                        cells.forEach(cell => { 
+                            cell.innerHTML = "" 
+                            joueurO.value=""
+                            joueurX.value=""
+                            cell.style.backgroundColor="#ffffff"
+                            cell.style.color="black"
+                            message.innerHTML=`Tour du O joueur`
+
+                            x.innerHTML=` X : `
+                            document.getElementById("scoreX").textContent = "0"
+
+                            o.innerHTML=` O : `
+                            document.getElementById("scoreO").textContent = "0"
+                        })
+                        cont = 1; tab = Array(9).fill(null)
+                    })
+                    let btn=document.getElementById("btn")
+                    btn.addEventListener("click", () => {
+                        
+                        cells.forEach(cell => {
+                        cell.innerHTML = ""
+                        cell.style.backgroundColor = "#fff"
+                    });
+
+                        tab = Array(9).fill(null);
+                        cont = 1
+
+            
+                        message.innerHTML = `Tour du ${joueurO.value} joueur`
+                    });
+                </script>
+                
+    </body> 
+</html> 
